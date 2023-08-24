@@ -12,5 +12,14 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
-  }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        chunkFileNames: 'assets/js/aldklivue-[name]-[hash].js',
+        entryFileNames: 'assets/js/aldklivue-[name]-[hash].js',
+        assetFileNames: 'assets/[ext]/aldklivue-[name]-[hash].[ext]',
+      }
+    }
+  },
 })
