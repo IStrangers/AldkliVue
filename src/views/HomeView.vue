@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
-const apiGroupMetaDataList = [{"apiMetaDataList":[{"methodType":"ALL","name":"获取测试列表","pathList":["getTestList","TestList"]},{"methodType":"GET","name":"getMapping","pathList":["getMapping"]}],"name":"测试分组","pathList":["test"]}]
+import axios from 'axios';
+import { ref } from 'vue'
+const apiGroupMetaDataList = ref<Array<any>>([])
+axios.get("/aldkli/metaData/getApiGroupMetaDataList/com.aix.controller").then((res) => {
+    apiGroupMetaDataList.value = res.data
+})
 </script>
 
 <template>
