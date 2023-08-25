@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { ref } from 'vue'
-const apiGroupMetaDataList = ref<Array<any>>([])
-axios.get("/aldkli/metaData/getApiGroupMetaDataList/com.aix.controller").then((res) => {
-    apiGroupMetaDataList.value = res.data
+const apiEntryList = ref([])
+const currentApiEntry = ref()
+axios.get("/aldkli/metaData/getApiEntryList").then((res) => {
+    apiEntryList.value = res.data
+    currentApiEntry.value = apiEntryList.value[0]
 })
 </script>
 
@@ -11,7 +13,7 @@ axios.get("/aldkli/metaData/getApiGroupMetaDataList/com.aix.controller").then((r
     <Row>
         <Col>
             <Menu active-name="0-0" :open-names="['0']">
-                <Submenu v-for="(apiGroupMetaData,groupIndex) in apiGroupMetaDataList" :name="`${groupIndex}`">
+                <Submenu v-for="(apiGroupMetaData,groupIndex) in currentApiEntry.apiGroupMetaDataList" :name="`${groupIndex}`">
                     <template #title>
                         <Icon type="ios-analytics" />
                         {{ apiGroupMetaData.name }}

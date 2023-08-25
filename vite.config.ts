@@ -5,7 +5,7 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: 'aldklivue',
+  base: 'aldkli',
   plugins: [
     vue(),
   ],
@@ -17,6 +17,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
+        dir: "aldkli",
         chunkFileNames: 'assets/js/aldklivue-[name]-[hash].js',
         entryFileNames: 'assets/js/aldklivue-[name]-[hash].js',
         assetFileNames: 'assets/[ext]/aldklivue-[name]-[hash].[ext]',
