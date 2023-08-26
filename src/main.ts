@@ -3,13 +3,15 @@ import './assets/main.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import ViewUIPlus from 'view-ui-plus'
-import 'view-ui-plus/dist/styles/viewuiplus.css'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 const app = createApp(App)
-
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
+}
 app
 .use(router)
-.use(ViewUIPlus)
-
-app.mount('#app')
+.use(ElementPlus)
+.mount('#app')
