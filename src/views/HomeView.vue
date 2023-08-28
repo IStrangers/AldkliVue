@@ -3,11 +3,14 @@ import axios from 'axios';
 import { ref,reactive,onBeforeMount } from 'vue'
 const apiEntryList = ref<Array<Record<string,any>>>([])
 const currentApiEntry = ref<Record<string,any>>({})
+const currentApiGroupMetaData = ref<Record<string,any>>({})
 const currentApiMetaData = ref<Record<string,any>>({})
 
-const getApiMetaData = (index: string) => {
+const getMetaData = (index: string) => {
     const indexArray = index.split("-")
-    return currentApiEntry.value.apiGroupMetaDataList[indexArray[0]].apiMetaDataList[indexArray[1]]
+    const apiGroupMetaData = currentApiEntry.value.apiGroupMetaDataList[indexArray[0]]
+    const apiMetaData = apiGroupMetaData.apiMetaDataList[indexArray[1]]
+    return [apiGroupMetaData,apiMetaData]
 }
 
 const setApiEntryList = (data: Array<Record<string,any>>) => {
@@ -17,7 +20,9 @@ const setApiEntryList = (data: Array<Record<string,any>>) => {
 }
 
 const setCurrentApiMetaData = (index: string) => {
-    currentApiMetaData.value = getApiMetaData(index)
+    const [apiGroupMetaData,apiMetaData] = getMetaData(index)
+    currentApiGroupMetaData.value = apiGroupMetaData
+    currentApiMetaData.value = apiMetaData
     currentApiMetaData.value.selectedMethod = currentApiMetaData.value.methodType
 }
 
@@ -62,7 +67,7 @@ onBeforeMount(() => {
                 </el-aside>
                 <el-main>
                     <el-input
-                        :value="currentApiMetaData.pathList[0]"
+                        :value="currentApiGroupMetaData.pathList[0] + '/' + currentApiMetaData.pathList[0]"
                         class="input-with-select"
                         size="large"
                     >
