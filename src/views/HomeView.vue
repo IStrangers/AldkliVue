@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import axios from 'axios';
-import { ref,reactive,onBeforeMount } from 'vue'
+import { ref,reactive,onBeforeMount,toRefs } from 'vue'
+const state = reactive({
+    isCollapse: false
+})
 const apiEntryList = ref<Array<Record<string,any>>>([])
 const currentApiEntry = ref<Record<string,any>>({})
 const currentApiGroupMetaData = ref<Record<string,any>>({})
@@ -32,9 +35,10 @@ onBeforeMount(() => {
     // })
     setApiEntryList([{
         "name": "全部",
-        "apiGroupMetaDataList": [{"name":"测试分组","pathList":["test"],"apiMetaDataList":[{"name":"获取测试列表","methodType":"ALL","pathList":["getTestList","TestList"],"apiParamList":[{"name":"param1","required":false,"description":"参数1","type":"search","dataType":"String"},{"name":"param2","required":true,"description":"","type":"urlPath","dataType":"int"}]},{"name":"getMapping","methodType":"GET","pathList":["getMapping"],"apiParamList":[]}]}]
+        "apiGroupMetaDataList": [{"name":"测试分组","pathList":["test"],"apiMetaDataList":[{"name":"getMapping","methodType":"GET","pathList":["getMapping"],"apiParamMetaDataList":[{"name":"data","required":false,"description":"","type":"","dataType":"Map<String,Long>","example":""}],"apiReturnTypeMetaData":{"name":"Result","dataType":"Object"}},{"name":"获取测试列表","methodType":"ALL","pathList":["getTestList","TestList"],"apiParamMetaDataList":[{"name":"param1","required":false,"description":"参数1","type":"search","dataType":"String","example":"test"},{"name":"param2","required":true,"description":"","type":"urlPath","dataType":"int","example":"1"}],"apiReturnTypeMetaData":{"name":"Result","dataType":"List<Map<String,Object>>"}}]}]
     }])
 })
+
 </script>
 
 <template>
@@ -44,8 +48,8 @@ onBeforeMount(() => {
                 
             </el-header>
             <el-container>
-                <el-aside width="200px">
-                    <el-select v-model="currentApiEntry" size="large">
+                <el-aside width="300px">
+                    <el-select v-model="currentApiEntry" size="large" style="width: 100%;">
                         <el-option
                             v-for="(apiEntry,entryIndex) in apiEntryList"
                             :key="apiEntry"
@@ -53,14 +57,18 @@ onBeforeMount(() => {
                             :value="apiEntry"
                         ></el-option>
                     </el-select>
-                    <el-menu default-active="0-0" @select="setCurrentApiMetaData">
+                    <el-menu default-active="0-0" :collapse="state.isCollapse" @select="setCurrentApiMetaData">
                         <el-sub-menu v-for="(apiGroupMetaData,groupIndex) in currentApiEntry.apiGroupMetaDataList" :index="`${groupIndex}`">
                             <template #title>
                                 <el-icon><Reading /></el-icon>
-                                {{ apiGroupMetaData.name }}
+                                <span>{{ apiGroupMetaData.name }}</span>
+                                <span style="display: flex;width: 100%;justify-content: right;">
+                                    <el-tag effect="plain" round>{{ apiGroupMetaData.apiMetaDataList.length }}</el-tag>
+                                </span>
                             </template>
                             <el-menu-item v-for="(apiMetaData,apiIndex) in apiGroupMetaData.apiMetaDataList" :index="`${groupIndex}-${apiIndex}`">
-                                {{ apiMetaData.methodType }} {{ apiMetaData.name }}
+                                <span style="margin-right: 10px;">{{ apiMetaData.methodType }}</span>
+                                <span>{{ apiMetaData.name }}</span>
                             </el-menu-item>
                         </el-sub-menu>
                     </el-menu>
@@ -85,11 +93,15 @@ onBeforeMount(() => {
                             <el-button size="large">发送</el-button>
                         </template>
                     </el-input>
-                    <el-table :data="currentApiMetaData.apiParamList" border style="width: 100%;margin-top: 5px;">
+                    <el-table :data="currentApiMetaData.apiParamMetaDataList" border style="width: 100%;margin-top: 5px;">
                         <el-table-column prop="name" label="参数名称"></el-table-column>
                         <el-table-column prop="required" label="是否必填"></el-table-column>
                         <el-table-column prop="description" label="参数说明"></el-table-column>
                         <el-table-column prop="type" label="参数类型"></el-table-column>
+                        <el-table-column prop="dataType" label="数据类型"></el-table-column>
+                    </el-table>
+                    <el-table :data="[currentApiMetaData.apiReturnTypeMetaData]" border style="width: 100%;margin-top: 5px;">
+                        <el-table-column prop="name" label="参数名称"></el-table-column>
                         <el-table-column prop="dataType" label="数据类型"></el-table-column>
                     </el-table>
                 </el-main>
