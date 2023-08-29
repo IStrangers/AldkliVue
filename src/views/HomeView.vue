@@ -35,7 +35,7 @@ onBeforeMount(() => {
     // })
     setApiEntryList([{
         "name": "全部",
-        "apiGroupMetaDataList": [{"name":"测试分组","pathList":["test"],"apiMetaDataList":[{"name":"getMapping","methodType":"GET","pathList":["getMapping"],"apiParamMetaDataList":[{"name":"data","required":false,"description":"","type":"","dataType":"Map<String,Long>","example":""}],"apiReturnTypeMetaData":{"name":"Result","dataType":"Object"}},{"name":"获取测试列表","methodType":"ALL","pathList":["getTestList","TestList"],"apiParamMetaDataList":[{"name":"param1","required":false,"description":"参数1","type":"search","dataType":"String","example":"test"},{"name":"param2","required":true,"description":"","type":"urlPath","dataType":"int","example":"1"}],"apiReturnTypeMetaData":{"name":"Result","dataType":"List<Map<String,Object>>"}}]}]
+        "apiGroupMetaDataList": [{"name":"测试分组","pathList":["test"],"apiMetaDataList":[{"name":"获取测试列表","methodType":"ALL","pathList":["getTestList","TestList"],"apiParamMetaDataList":[{"name":"param1","required":false,"description":"参数1","type":"search","dataType":"String","example":"test"},{"name":"param2","required":true,"description":"","type":"urlPath","dataType":"int","example":"1"}],"apiReturnTypeMetaData":{"name":"Result","description":"","dataType":"List<Map<String,Object>>","children":null}},{"name":"获取用户","methodType":"GET","pathList":["getUser"],"apiParamMetaDataList":[],"apiReturnTypeMetaData":{"name":"Result","description":"用户","dataType":"User","children":[{"name":"userName","description":"用户名称","dataType":"String","children":null},{"name":"code","description":"编码","dataType":"Long","children":null},{"name":"dept","description":"用户所在部门","dataType":"Dept","children":[{"name":"deptName","description":"部门名称","dataType":"String","children":null},{"name":"code","description":"部门编码","dataType":"String","children":null}]}]}},{"name":"获取用户列表","methodType":"GET","pathList":["getUserList"],"apiParamMetaDataList":[{"name":"data","required":false,"description":"","type":"","dataType":"Map<String,Long>","example":""}],"apiReturnTypeMetaData":{"name":"Result","description":"用户","dataType":"List<User>","children":[{"name":"userName","description":"用户名称","dataType":"String","children":null},{"name":"code","description":"编码","dataType":"Long","children":null},{"name":"dept","description":"用户所在部门","dataType":"Dept","children":[{"name":"deptName","description":"部门名称","dataType":"String","children":null},{"name":"code","description":"部门编码","dataType":"String","children":null}]}]}}]}]
     }])
 })
 
@@ -100,8 +100,9 @@ onBeforeMount(() => {
                         <el-table-column prop="type" label="参数类型"></el-table-column>
                         <el-table-column prop="dataType" label="数据类型"></el-table-column>
                     </el-table>
-                    <el-table :data="[currentApiMetaData.apiReturnTypeMetaData]" border style="width: 100%;margin-top: 5px;">
+                    <el-table row-key="name" default-expand-all :data="[currentApiMetaData.apiReturnTypeMetaData]" border style="width: 100%;margin-top: 5px;">
                         <el-table-column prop="name" label="参数名称"></el-table-column>
+                        <el-table-column prop="description" label="参数说明"></el-table-column>
                         <el-table-column prop="dataType" label="数据类型"></el-table-column>
                     </el-table>
                 </el-main>
