@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import axios from 'axios'
-import { ref,onBeforeMount,defineProps,defineEmits } from 'vue'
+import { ref,onBeforeMount } from 'vue'
 const props = defineProps<{
     apiEntryList: Array<Record<string,any>>
 }>()
-const emits = defineEmits<{
-    change: Function
-}>()
+const emits = defineEmits(['change'])
 const isCollapse = ref<boolean>(false)
 const apiEntry = ref<Record<string,any>>({})
 

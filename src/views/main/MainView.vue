@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import DocumentView from './DocumentView.vue'
 import DebuggerView from './DebuggerView.vue'
-import { defineProps } from 'vue'
 const props = defineProps<{
     apiGroupMetaData: Record<string,any> | undefined
     apiMetaData: Record<string,any> | undefined
