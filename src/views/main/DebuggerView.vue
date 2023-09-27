@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import JsonViewer from 'vue-json-viewer'
-import axios from 'axios';
+import { JsonViewer } from "vue3-json-viewer"
+import "vue3-json-viewer/dist/index.css"
+import axios from 'axios'
 import { reactive,ref } from 'vue'
 const props = defineProps<{
     apiGroupMetaData: Record<string,any> | undefined

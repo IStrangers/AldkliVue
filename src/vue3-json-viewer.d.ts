@@ -1,4 +1,4 @@
-declare module 'vue-json-viewer' {
+declare module 'vue3-json-viewer' {
     import { AllowedComponentProps, App, Component, ComponentCustomProps, VNodeProps } from 'vue'
     interface JsonViewerProps {
         value: Object | Array<any> | string | number | boolean; //对象
@@ -7,7 +7,7 @@ declare module 'vue-json-viewer' {
         copyable: boolean | object; //是否可复制
         sort: boolean;//是否排序
         boxed: boolean;//是否boxed
-        theme: string;//主题 jv-dark | jv-light
+        theme: string;//主题 dark | light
         previewMode: boolean;//是否可复制
         timeformat: (value: any) => string
     }
