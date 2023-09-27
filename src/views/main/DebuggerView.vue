@@ -2,9 +2,8 @@
 import { JsonViewer } from "vue3-json-viewer"
 import "vue3-json-viewer/dist/index.css"
 import axios from 'axios'
-import { reactive,ref } from 'vue'
+import { onBeforeMount, reactive,ref,watch } from 'vue'
 const props = defineProps<{
-    apiGroupMetaData: Record<string,any> | undefined
     apiMetaData: Record<string,any> | undefined
 }>()
 
@@ -13,23 +12,31 @@ const getEmptyObj = () => {return {_id: getId()}}
 const cloneObj = (obj: any) => JSON.parse(JSON.stringify(obj))
 
 const loading = ref(false)
-const { apiGroupMetaData,apiMetaData } = props
-const requestConfig: Record<string,any> = reactive( 
-    apiGroupMetaData && apiMetaData ?
-    {
-        url: `${apiGroupMetaData.pathList[0]}/${apiMetaData.pathList[0]}`,
-        methodType: apiMetaData.methodType,
-        selectedMethod: apiMetaData.methodType,
-        headers: [],
-        params: cloneObj(apiMetaData.apiParamMetaDataList.map((v: Record<string,any>) => {v._id = getId();return v})),
-    } : {
-        url: ``,
-        methodType: ``,
-        selectedMethod: ``,
-        headers: [],
-        params: [],
-    }
-)
+let requestConfig: Record<string,any>
+const initRequestConfig = (apiMetaData: Record<string,any> | undefined) => {
+    requestConfig = reactive( 
+        apiMetaData ?
+        {
+            url: `/${apiMetaData.parent.pathList[0]}/${apiMetaData.pathList[0]}`,
+            methodType: apiMetaData.methodType,
+            selectedMethod: apiMetaData.methodType,
+            headers: [],
+            params: cloneObj(apiMetaData.apiParamMetaDataList.map((v: Record<string,any>) => {v._id = getId();return v})),
+        } : {
+            url: ``,
+            methodType: ``,
+            selectedMethod: ``,
+            headers: [],
+            params: [],
+        }
+    )
+}
+watch(() => props.apiMetaData,(apiMetaData: Record<string,any> | undefined) => {
+    initRequestConfig(apiMetaData)
+})
+onBeforeMount(() => {
+    initRequestConfig(props.apiMetaData)
+})
 
 const deleteSelectedRecord = (selectedRecords: Array<Record<string,any>>) => (record: Record<string,any>) => !selectedRecords.find(selectedRecord => record._id === selectedRecord._id)
 let selectedHeaders: Array<Record<string,any>> = []
@@ -78,6 +85,7 @@ const sendRequest = () => {
         loading.value = false
     })
 }
+const v = [{"name":"测试分组","pathList":["test"],"apiMetaDataList":[{"name":"获取测试列表","methodType":"ALL","pathList":["getTestList","TestList"],"apiParamMetaDataList":[{"name":"param1","required":false,"description":"参数1","type":"","dataType":"","example":"test"},{"name":"param2","required":false,"description":"","type":"","dataType":"","example":"1"}],"apiReturnTypeMetaData":{"name":"Result","description":"测试列表","dataType":"List<Map<String,Object>>","children":[]}},{"name":"获取用户列表","methodType":"GET","pathList":["getUserList"],"apiParamMetaDataList":[{"name":"arg0","required":false,"description":"","type":"","dataType":"Map<String,Long>","example":""}],"apiReturnTypeMetaData":{"name":"Result","description":"用户","dataType":"List<User>","children":[{"name":"userName","description":"用户名称","dataType":"String","children":[]},{"name":"code","description":"编码","dataType":"Long","children":[]},{"name":"dept","description":"用户所在部门","dataType":"Dept","children":[{"name":"deptName","description":"部门名称","dataType":"String","children":[]},{"name":"code","description":"部门编码","dataType":"String","children":[]}]}]}},{"name":"获取用户","methodType":"GET","pathList":["getUser"],"apiParamMetaDataList":[],"apiReturnTypeMetaData":{"name":"Result","description":"用户","dataType":"User","children":[{"name":"userName","description":"用户名称","dataType":"String","children":[]},{"name":"code","description":"编码","dataType":"Long","children":[]},{"name":"dept","description":"用户所在部门","dataType":"Dept","children":[{"name":"deptName","description":"部门名称","dataType":"String","children":[]},{"name":"code","description":"部门编码","dataType":"String","children":[]}]}]}}]}]
 </script>
 
 <template>
@@ -138,7 +146,8 @@ const sendRequest = () => {
             </el-tab-pane>
         </el-tabs>
         <div class="response-container">
-            <JsonViewer v-if="response.data" :value="response.data" boxed sort theme="light"/>
+            <!-- <JsonViewer v-if="response.data" :value="response.data" expanded :expandDepth="5" boxed sort theme="light"/> -->
+            <JsonViewer :value="v" expanded :expandDepth="5" boxed theme="light"/>
         </div>
     </div>
 </template>

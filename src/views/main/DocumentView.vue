@@ -1,17 +1,16 @@
 <script setup lang="ts">
 const props = defineProps<{
-    apiGroupMetaData: Record<string,any> | undefined
     apiMetaData: Record<string,any> | undefined
 }>()
 </script>
 
 <template>
-    <template v-if="apiGroupMetaData && apiMetaData">
+    <template v-if="apiMetaData">
         <el-input
-            :value="apiGroupMetaData.pathList[0] + '/' + apiMetaData.pathList[0]"
-            class="input-with-select"
-            size="large"
-            readonly="readonly"
+        :value="`/${apiMetaData.parent.pathList[0]}/${apiMetaData.pathList[0]}`"
+        class="input-with-select"
+        size="large"
+        readonly="readonly"
         >
             <template #prepend>
                 <el-select v-model="apiMetaData.selectedMethod" style="width: 115px" size="large" disabled="disabled">

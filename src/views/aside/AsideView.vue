@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import axios from 'axios'
-import { ref,onBeforeMount } from 'vue'
+import { onBeforeMount, ref,watch } from 'vue'
 const props = defineProps<{
     apiEntryList: Array<Record<string,any>>
 }>()
@@ -20,11 +20,16 @@ const setCurrentApiMetaData = (index: string) => {
     emits("change",apiGroupMetaData,apiMetaData)
 }
 
-onBeforeMount(() => {
-    apiEntry.value = props.apiEntryList[0]
+const changeApiEntry = (data: Array<Record<string,any>>) => {
+    apiEntry.value = data[0]
     setCurrentApiMetaData("0-0")
+}
+watch(() => props.apiEntryList,(newVal) => {
+    changeApiEntry(newVal)
 })
-
+onBeforeMount(() => {
+    changeApiEntry(props.apiEntryList)
+})
 </script>
 
 <template>
@@ -54,5 +59,7 @@ onBeforeMount(() => {
 </template>
 
 <style scoped lang="scss">
-
+.el-menu {
+    height: calc(100% - 40px);
+}
 </style>
