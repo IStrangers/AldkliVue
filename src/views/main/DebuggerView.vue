@@ -146,8 +146,7 @@ const v = [{"name":"测试分组","pathList":["test"],"apiMetaDataList":[{"name"
             </el-tab-pane>
         </el-tabs>
         <div class="response-container">
-            <!-- <JsonViewer v-if="response.data" :value="response.data" expanded :expandDepth="5" boxed sort theme="light"/> -->
-            <JsonViewer :value="v" expanded :expandDepth="5" boxed theme="light"/>
+            <JsonViewer v-if="response.data" :value="response.data" expanded :expandDepth="5" boxed sort theme="light"/>
         </div>
     </div>
 </template>
