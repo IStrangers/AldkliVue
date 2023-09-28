@@ -13,7 +13,7 @@ const props = defineProps<{
         readonly="readonly"
         >
             <template #prepend>
-                <el-select v-model="apiMetaData.selectedMethod" style="width: 115px" size="large" disabled="disabled">
+                <el-select v-model="apiMetaData.methodType" style="width: 115px" size="large" disabled="disabled">
                     <template v-if="apiMetaData.methodType === 'ALL'">
                         <el-option v-for="method in ['GET','POST','PUT','DELETE','PATCH']" :label="method" :value="method" ></el-option>
                     </template>

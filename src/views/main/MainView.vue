@@ -7,7 +7,7 @@ const props = defineProps<{
 </script>
 
 <template>
-    <el-tabs tab-position="left" style="height: 100%">
+    <el-tabs tab-position="left" style="height: 100%" :key="apiMetaData">
         <el-tab-pane>
             <template #label>
                 <el-icon><Document /></el-icon>

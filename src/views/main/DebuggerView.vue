@@ -6,10 +6,16 @@ import { onBeforeMount, reactive,ref,watch } from 'vue'
 const props = defineProps<{
     apiMetaData: Record<string,any> | undefined
 }>()
-
+const defaultContentType = "application/x-www-form-urlencoded"
+const defaultBodyContentType = "application/json"
+const defaultHeaders = [{name: "Content-Type",value: defaultContentType}]
+const defaultHeaderNames = defaultHeaders.map(header => header.name)
 const getId = () => Math.random() * 100000000
 const getEmptyObj = () => {return {_id: getId()}}
 const cloneObj = (obj: any) => JSON.parse(JSON.stringify(obj))
+const isDefaultHeader = (row: Record<string,any>) => {
+    return defaultHeaderNames.includes(row.name)
+}
 
 const loading = ref(false)
 let requestConfig: Record<string,any>
@@ -17,16 +23,18 @@ const initRequestConfig = (apiMetaData: Record<string,any> | undefined) => {
     requestConfig = reactive( 
         apiMetaData ?
         {
+            bodyContentType: defaultBodyContentType,
             url: `/${apiMetaData.parent.pathList[0]}/${apiMetaData.pathList[0]}`,
             methodType: apiMetaData.methodType,
-            selectedMethod: apiMetaData.methodType,
-            headers: [],
+            selectedMethod: apiMetaData.methodType === "ALL" ? "GET" : apiMetaData.methodType,
+            headers: cloneObj(defaultHeaders),
             params: cloneObj(apiMetaData.apiParamMetaDataList.map((v: Record<string,any>) => {v._id = getId();return v})),
         } : {
+            bodyContentType: defaultBodyContentType,
             url: ``,
             methodType: ``,
             selectedMethod: ``,
-            headers: [],
+            headers: cloneObj(defaultHeaders),
             params: [],
         }
     )
@@ -60,6 +68,9 @@ const addParam = () => {
     requestConfig.params.push(getEmptyObj())
 }
 
+const changeTab = (tabName: string) => {
+
+}
 
 const arrayToObj = (arr: Array<Record<string,any>>) => {
     const obj: any = {}
@@ -71,12 +82,14 @@ const arrayToObj = (arr: Array<Record<string,any>>) => {
 const response = reactive<Record<string,any>>({})
 const sendRequest = () => {
     loading.value = true
+    const header = requestConfig.headers.find((header: Record<string,any>) => header.name === "Content-Type")
+    header.value = requestConfig.body ? requestConfig.bodyContentType : defaultContentType
     axios({
         url: requestConfig.url,
         method: requestConfig.selectedMethod,
         headers: arrayToObj(requestConfig.headers),
         params: arrayToObj(requestConfig.params),
-        data: requestConfig.data,
+        data: requestConfig.body,
     }).then((res) => {
         response.data = res.data
         loading.value = false
@@ -109,20 +122,20 @@ const v = [{"name":"测试分组","pathList":["test"],"apiMetaDataList":[{"name"
                 <el-button size="large" @click="sendRequest">发送</el-button>
             </template>
         </el-input>
-        <el-tabs style="height: 100%">
-            <el-tab-pane label="请求头值">
+        <el-tabs style="height: 100%" @tab-change="changeTab">
+            <el-tab-pane label="请求标头">
                 <el-button @click="deleteHeaders">删除</el-button>
                 <el-button @click="addHeader" type="primary">增加</el-button>
-                <el-table @selection-change="changeSelectedHeaders" :data="requestConfig.headers" border style="width: 100%;margin-top: 5px;">
-                    <el-table-column type="selection" width="50"/>
+                <el-table key="_id" @selection-change="changeSelectedHeaders" :data="requestConfig.headers" border style="width: 100%;margin-top: 5px;">
+                    <el-table-column type="selection" width="50" :selectable="(row: Record<string,any>) => !isDefaultHeader(row)"/>
                     <el-table-column prop="name" label="Header">
                         <template #default="scope">
-                            <el-input v-model="scope.row.name" clearable></el-input>
+                            <el-input v-model="scope.row.name" clearable :disabled="isDefaultHeader(scope.row)"></el-input>
                         </template>
                     </el-table-column>
                     <el-table-column prop="value" label="Value">
                         <template #default="scope">
-                            <el-input v-model="scope.row.value" clearable></el-input>
+                            <el-input v-model="scope.row.value" clearable :disabled="isDefaultHeader(scope.row)"></el-input>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -143,6 +156,28 @@ const v = [{"name":"测试分组","pathList":["test"],"apiMetaDataList":[{"name"
                         </template>
                     </el-table-column>
                 </el-table>
+            </el-tab-pane>
+            <el-tab-pane label="请求主体">
+                <el-dropdown @command="(v: string) => requestConfig.bodyContentType=v">
+                    <el-button>
+                        {{ requestConfig.bodyContentType }}<el-icon class="el-icon--right"><arrow-down /></el-icon>
+                    </el-button>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item command="application/json">application/json</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
+                <div style="margin-top: 10px;">
+                    <template v-if="requestConfig.bodyContentType === 'application/json'">
+                        <el-input
+                            v-model="requestConfig.body"
+                            :rows="30"
+                            type="textarea"
+                            placeholder="请输入">
+                        </el-input>
+                    </template>
+                </div>
             </el-tab-pane>
         </el-tabs>
         <div class="response-container">
